@@ -14,7 +14,7 @@ struct Krawedz {
 
 using Graf = vector<vector<Krawedz>>;
 
-vector<int> dijkstra(const Graf& graf, int pocz, bool czas) {
+vector<int> dijkstra(const Graf& graf, int pocz, bool tryb_czas) {
     int n = graf.size();
     vector<int> koszt(n, INF);
     priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
@@ -33,7 +33,15 @@ vector<int> dijkstra(const Graf& graf, int pocz, bool czas) {
 
         for (size_t i = 0; i < graf[wierz].size(); i++) {
             Krawedz krawedz = graf[wierz][i];
-            int nowy_koszt = akt_koszt + (czas ? krawedz.czas : krawedz.odleglosc);
+            int waga_krawedzi;
+
+            if (tryb_czas) {
+                waga_krawedzi = krawedz.czas;
+            } else {
+                waga_krawedzi = krawedz.odleglosc;
+            }
+
+            int nowy_koszt = akt_koszt + waga_krawedzi;
 
             if (nowy_koszt < koszt[krawedz.do_]) {
                 koszt[krawedz.do_] = nowy_koszt;
