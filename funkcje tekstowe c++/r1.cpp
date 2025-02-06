@@ -17,7 +17,7 @@ using Graf = vector<vector<Krawedz>>;
 vector<int> dijkstra(const Graf& graf, int pocz, bool czas) {
     int n = graf.size();
     vector<int> koszt(n, INF);
-    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<>> pq;
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
 
     koszt[pocz] = 0;
     pq.push({0, pocz});
@@ -27,10 +27,19 @@ vector<int> dijkstra(const Graf& graf, int pocz, bool czas) {
         int wierz = pq.top().second;
         pq.pop();
 
-        if (akt_koszt > koszt[wierz]) continue;
+        if (akt_koszt > koszt[wierz]) {
+            continue;
+        }
 
-        for (const auto& krawedz : graf[wierz]) {
-            int nowy_koszt = akt_koszt + (czas ? krawedz.czas : krawedz.odleglosc);
+        for (size_t i = 0; i < graf[wierz].size(); i++) {
+            Krawedz krawedz = graf[wierz][i];
+            int nowy_koszt;
+
+            if (czas) {
+                nowy_koszt = akt_koszt + krawedz.czas;
+            } else {
+                nowy_koszt = akt_koszt + krawedz.odleglosc;
+            }
 
             if (nowy_koszt < koszt[krawedz.do_]) {
                 koszt[krawedz.do_] = nowy_koszt;
@@ -73,8 +82,19 @@ int main() {
     vector<int> najkrotsza = dijkstra(graf, pocz, false);
     vector<int> najszybsza = dijkstra(graf, pocz, true);
 
-    cout << "Najkrótsza droga: " << (najkrotsza[koniec] == INF ? -1 : najkrotsza[koniec]) << "\n";
-    cout << "Najkrótszy czas: " << (najszysza[koniec] == INF ? -1 : najszybsza[koniec]) << "\n";
+    cout << "Najkrótsza droga: ";
+    if (najkrotsza[koniec] == INF) {
+        cout << -1 << "\n";
+    } else {
+        cout << najkrotsza[koniec] << "\n";
+    }
+
+    cout << "Najkrótszy czas: ";
+    if (najszysza[koniec] == INF) {
+        cout << -1 << "\n";
+    } else {
+        cout << najszybsza[koniec] << "\n";
+    }
 
     return 0;
 }
