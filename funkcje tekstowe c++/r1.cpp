@@ -33,13 +33,7 @@ vector<int> dijkstra(const Graf& graf, int pocz, bool czas) {
 
         for (size_t i = 0; i < graf[wierz].size(); i++) {
             Krawedz krawedz = graf[wierz][i];
-            int nowy_koszt;
-
-            if (czas) {
-                nowy_koszt = akt_koszt + krawedz.czas;
-            } else {
-                nowy_koszt = akt_koszt + krawedz.odleglosc;
-            }
+            int nowy_koszt = akt_koszt + (czas ? krawedz.czas : krawedz.odleglosc);
 
             if (nowy_koszt < koszt[krawedz.do_]) {
                 koszt[krawedz.do_] = nowy_koszt;
@@ -82,18 +76,11 @@ int main() {
     vector<int> najkrotsza = dijkstra(graf, pocz, false);
     vector<int> najszybsza = dijkstra(graf, pocz, true);
 
-    cout << "Najkrótsza droga: ";
     if (najkrotsza[koniec] == INF) {
-        cout << -1 << "\n";
+        cout << "Brak dostępnej drogi między podanymi wierzchołkami.\n";
     } else {
-        cout << najkrotsza[koniec] << "\n";
-    }
-
-    cout << "Najkrótszy czas: ";
-    if (najszysza[koniec] == INF) {
-        cout << -1 << "\n";
-    } else {
-        cout << najszybsza[koniec] << "\n";
+        cout << "Najkrótsza droga: " << najkrotsza[koniec] << "\n";
+        cout << "Najkrótszy czas: " << najszybsza[koniec] << "\n";
     }
 
     return 0;
