@@ -1,76 +1,68 @@
 #include <iostream>
 #include <vector>
-#include <queue>
-#include <fstream>
 #include <limits>
 
 using namespace std;
 
 const int INF = numeric_limits<int>::max();
-using PII = pair<int, int>;
 
-struct Edge {
-    int to, distance, time;
+struct Krawedz {
+    int do_, waga;
 };
 
-using Graph = vector<vector<Edge>>;
+using Graf = vector<vector<Krawedz>>;
 
-// Algorytm Dijkstry dla dowolnej wagi (dystans/czas)
-vector<int> dijkstra(const Graph& graph, int start, bool byDistance) {
-    int n = graph.size();
-    vector<int> dist(n, INF);
-    priority_queue<PII, vector<PII>, greater<>> pq;
+vector<int> dijkstra(const Graf& graf, int pocz) {
+    int n = graf.size();
+    vector<int> koszt(n, INF);
+    vector<bool> odwiedzone(n, false);
 
-    dist[start] = 0;
-    pq.emplace(0, start);
+    koszt[pocz] = 0;
 
-    while (!pq.empty()) {
-        auto [d, u] = pq.top(); pq.pop();
-        if (d > dist[u]) continue;
+    for (int i = 0; i < n - 1; i++) {
+        int w1 = -1;
+        for (int j = 0; j < n; j++) {
+            if (!odwiedzone[j] && (w1 == -1 || koszt[j] < koszt[w1])) {
+                w1 = j;
+            }
+        }
 
-        for (const auto& edge : graph[u]) {
-            int weight = byDistance ? edge.distance : edge.time;
-            if (dist[u] + weight < dist[edge.to]) {
-                dist[edge.to] = dist[u] + weight;
-                pq.emplace(dist[edge.to], edge.to);
+        if (koszt[w1] == INF) break;
+
+        odwiedzone[w1] = true;
+
+        for (const auto& krawedz : graf[w1]) {
+            int w2 = krawedz.do_;
+            int waga = krawedz.waga;
+
+            if (!odwiedzone[w2] && koszt[w1] + waga < koszt[w2]) {
+                koszt[w2] = koszt[w1] + waga;
             }
         }
     }
-    return dist;
+
+    return koszt;
 }
 
 int main() {
-    string filename;
-    cout << "Podaj nazwę pliku: ";
-    cin >> filename;
+    int n, m, pocz;
+    cin >> n >> m;
 
-    ifstream file(filename);
-    if (!file) {
-        cerr << "Nie można otworzyć pliku!\n";
-        return 1;
-    }
-
-    int n, m;
-    file >> n >> m;
-    Graph graph(n);
+    Graf graf(n);
 
     for (int i = 0; i < m; i++) {
-        int u, v, d, t;
-        file >> u >> v >> d >> t;
-        graph[u].push_back({v, d, t});
+        int u, v, w;
+        cin >> u >> v >> w;
+        graf[u].push_back({v, w});
     }
 
-    file.close();
+    cin >> pocz;
 
-    int start, end;
-    cout << "Podaj wierzchołek początkowy i końcowy: ";
-    cin >> start >> end;
+    vector<int> koszt = dijkstra(graf, pocz);
 
-    vector<int> dist = dijkstra(graph, start, true);
-    vector<int> time = dijkstra(graph, start, false);
-
-    cout << "Najkrótsza droga do " << end << ": " << (dist[end] == INF ? -1 : dist[end]) << " jednostek odległości\n";
-    cout << "Najszybsza droga do " << end << ": " << (time[end] == INF ? -1 : time[end]) << " jednostek czasu\n";
+    for (int i = 0; i < n; i++) {
+        cout << (koszt[i] == INF ? -1 : koszt[i]) << "\n";
+    }
 
     return 0;
 }
