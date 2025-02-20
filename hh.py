@@ -1,36 +1,22 @@
-def najdluzszy_ciag_niemalejacy(nazwa_pliku):
+def policz_cyfre_6(nazwa_pliku):
     try:
         with open(nazwa_pliku, 'r') as plik:
-            liczby = [float(linia.strip()) for linia in plik if linia.strip()]
+            liczby = [linia.strip() for linia in plik if linia.strip()]
 
         if not liczby:
-            return None, 0
+            return 0, 0
 
-        najdluzszy_ciag = []
-        aktualny_ciag = [liczby[0]]
+        liczba_szostek_10 = sum(str(liczba).count('6') for liczba in liczby)
+        liczba_szostek_8 = sum(oct(int(float(liczba))).count('6') for liczba in liczby if float(liczba).is_integer())
 
-        for i in range(1, len(liczby)):
-            if liczby[i] >= liczby[i - 1]:
-                aktualny_ciag.append(liczby[i])
-            else:
-                if len(aktualny_ciag) > len(najdluzszy_ciag):
-                    najdluzszy_ciag = aktualny_ciag
-                aktualny_ciag = [liczby[i]]
-
-        if len(aktualny_ciag) > len(najdluzszy_ciag):
-            najdluzszy_ciag = aktualny_ciag
-
-        return najdluzszy_ciag[0], len(najdluzszy_ciag)
+        return liczba_szostek_10, liczba_szostek_8
 
     except Exception as e:
         print(f"Błąd: {e}")
-        return None, 0
+        return 0, 0
 
 plik_nazwa = "dane.txt"
-pierwszy_element, dlugosc_ciagu = najdluzszy_ciag_niemalejacy(plik_nazwa)
+liczba_szostek_10, liczba_szostek_8 = policz_cyfre_6(plik_nazwa)
 
-if pierwszy_element is not None:
-    print(f"Pierwszy element ciągu: {pierwszy_element}")
-    print(f"Liczba elementów: {dlugosc_ciagu}")
-else:
-    print("Brak danych lub błąd odczytu.")
+print(f"Liczba wystąpień cyfry 6 w systemie dziesiętnym: {liczba_szostek_10}")
+print(f"Liczba wystąpień cyfry 6 w systemie ósemkowym: {liczba_szostek_8}")
