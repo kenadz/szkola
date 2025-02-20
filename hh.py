@@ -1,22 +1,23 @@
-def policz_cyfre_6(nazwa_pliku):
+def porownaj_plik_linie(plik1, plik2):
     try:
-        with open(nazwa_pliku, 'r') as plik:
-            liczby = [linia.strip() for linia in plik if linia.strip()]
+        with open(plik1, 'r') as p1, open(plik2, 'r') as p2:
+            linie1 = [float(linia.strip()) for linia in p1 if linia.strip()]
+            linie2 = [float(linia.strip()) for linia in p2 if linia.strip()]
 
-        if not liczby:
-            return 0, 0
+        min_dlugosc = min(len(linie1), len(linie2))
 
-        liczba_szostek_10 = sum(str(liczba).count('6') for liczba in liczby)
-        liczba_szostek_8 = sum(oct(int(float(liczba))).count('6') for liczba in liczby if float(liczba).is_integer())
+        licznik_rownych = sum(1 for i in range(min_dlugosc) if linie1[i] == linie2[i])
+        licznik_wiekszych = sum(1 for i in range(min_dlugosc) if linie1[i] > linie2[i])
 
-        return liczba_szostek_10, liczba_szostek_8
+        return licznik_rownych, licznik_wiekszych
 
     except Exception as e:
         print(f"Błąd: {e}")
         return 0, 0
 
-plik_nazwa = "dane.txt"
-liczba_szostek_10, liczba_szostek_8 = policz_cyfre_6(plik_nazwa)
+plik1 = "liczby1.txt"
+plik2 = "liczby2.txt"
+rowne, wieksze = porownaj_plik_linie(plik1, plik2)
 
-print(f"Liczba wystąpień cyfry 6 w systemie dziesiętnym: {liczba_szostek_10}")
-print(f"Liczba wystąpień cyfry 6 w systemie ósemkowym: {liczba_szostek_8}")
+print(f"Liczba wierszy, gdzie wartości są takie same: {rowne}")
+print(f"Liczba wierszy, gdzie wartość w 'liczby1' jest większa niż w 'liczby2': {wieksze}")
