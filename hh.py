@@ -3,10 +3,20 @@ def znajdz_min_max(nazwa_pliku):
         with open(nazwa_pliku, 'r') as plik:
             liczby = [float(liczba) for linia in plik for liczba in linia.replace(',', ' ').split()]
         
-        if liczby:
-            return min(liczby), max(liczby)
-        else:
+        if not liczby:
             return None, None
+
+        # Ręczne znalezienie min i max
+        min_liczba = liczby[0]
+        max_liczba = liczby[0]
+
+        for liczba in liczby[1:]:
+            if liczba < min_liczba:
+                min_liczba = liczba
+            if liczba > max_liczba:
+                max_liczba = liczba
+
+        return min_liczba, max_liczba
     except Exception as e:
         print(f"Błąd: {e}")
         return None, None
