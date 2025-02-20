@@ -4,7 +4,7 @@ def najdluzszy_ciag_niemalejacy(nazwa_pliku):
             liczby = [float(linia.strip()) for linia in plik if linia.strip()]
 
         if not liczby:
-            return []
+            return None, 0
 
         najdluzszy_ciag = []
         aktualny_ciag = [liczby[0]]
@@ -20,16 +20,17 @@ def najdluzszy_ciag_niemalejacy(nazwa_pliku):
         if len(aktualny_ciag) > len(najdluzszy_ciag):
             najdluzszy_ciag = aktualny_ciag
 
-        return najdluzszy_ciag
+        return najdluzszy_ciag[0], len(najdluzszy_ciag)
 
     except Exception as e:
         print(f"Błąd: {e}")
-        return []
+        return None, 0
 
 plik_nazwa = "dane.txt"
-ciag = najdluzszy_ciag_niemalejacy(plik_nazwa)
+pierwszy_element, dlugosc_ciagu = najdluzszy_ciag_niemalejacy(plik_nazwa)
 
-if ciag:
-    print(f"Najdłuższy niemalejący ciąg: {ciag}")
+if pierwszy_element is not None:
+    print(f"Pierwszy element ciągu: {pierwszy_element}")
+    print(f"Liczba elementów: {dlugosc_ciagu}")
 else:
     print("Brak danych lub błąd odczytu.")
