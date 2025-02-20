@@ -1,8 +1,8 @@
 def porownaj_plik_linie(plik1, plik2):
     try:
         with open(plik1, 'r') as p1, open(plik2, 'r') as p2:
-            linie1 = [float(linia.strip()) for linia in p1 if linia.strip()]
-            linie2 = [float(linia.strip()) for linia in p2 if linia.strip()]
+            linie1 = [int(linia.strip(), 8) for linia in p1 if linia.strip()]  # Zamiana na dziesiętny
+            linie2 = [float(linia.strip()) for linia in p2 if linia.strip()]  # Zakładamy, że liczby w pliku 2 są w dziesiętnym
 
         min_dlugosc = min(len(linie1), len(linie2))
 
@@ -15,8 +15,8 @@ def porownaj_plik_linie(plik1, plik2):
         print(f"Błąd: {e}")
         return 0, 0
 
-plik1 = "liczby1.txt"
-plik2 = "liczby2.txt"
+plik1 = "liczby1.txt"  # Plik z liczbami ósemkowymi
+plik2 = "liczby2.txt"  # Plik z liczbami dziesiętnymi
 rowne, wieksze = porownaj_plik_linie(plik1, plik2)
 
 print(f"Liczba wierszy, gdzie wartości są takie same: {rowne}")
