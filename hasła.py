@@ -34,25 +34,19 @@ def task_74_4(passwords):
         any(c.islower() for c in pwd) and any(c.isupper() for c in pwd)
     )
 
-def save_results(filename, results):
-    """Zapisuje wyniki do pliku."""
-    with open(filename, "w") as file:
-        for key, value in results.items():
-            if isinstance(value, list):  # Jeśli wynik jest listą (np. powtarzające się hasła)
-                file.write(f"{key}.\n" + "\n".join(value) + "\n")
-            else:
-                file.write(f"{key}. {value}\n")
-
 # Główna część programu
 passwords = load_passwords("hasla.txt")
 
-results = {
-    "74.1": task_74_1(passwords),
-    "74.2": task_74_2(passwords),
-    "74.3": task_74_3(passwords),
-    "74.4": task_74_4(passwords),
-}
+result_74_1 = task_74_1(passwords)
+result_74_2 = task_74_2(passwords)
+result_74_3 = task_74_3(passwords)
+result_74_4 = task_74_4(passwords)
 
-save_results("wyniki_hasla.txt", results)
+# Zapis wyników do pliku
+with open("wyniki_hasla.txt", "w") as file:
+    file.write(f"74.1. {result_74_1}\n")
+    file.write("74.2.\n" + "\n".join(result_74_2) + "\n")
+    file.write(f"74.3. {result_74_3}\n")
+    file.write(f"74.4. {result_74_4}\n")
 
 print("Wyniki zapisano w pliku wyniki_hasla.txt")
