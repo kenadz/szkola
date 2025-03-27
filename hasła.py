@@ -1,5 +1,4 @@
 import re
-from collections import Counter
 
 def load_passwords(filename):
     """Wczytuje hasła z pliku i zwraca listę."""
@@ -12,8 +11,16 @@ def task_74_1(passwords):
 
 def task_74_2(passwords):
     """Znajduje powtarzające się hasła i zwraca je w kolejności leksykograficznej."""
-    password_counts = Counter(passwords)
-    return sorted([pwd for pwd, count in password_counts.items() if count > 1])
+    seen = set()
+    duplicates = set()
+
+    for pwd in passwords:
+        if pwd in seen:
+            duplicates.add(pwd)
+        else:
+            seen.add(pwd)
+
+    return sorted(duplicates)
 
 def has_ascii_sequence(password):
     """Sprawdza, czy w haśle występują cztery kolejne znaki ASCII w dowolnej kolejności."""
