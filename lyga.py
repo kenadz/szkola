@@ -1,62 +1,67 @@
 import re
 
-def mod_inverse(a, m):
+def odwrotność_modulo(a, m):
     for x in range(1, m):
         if (a * x) % m == 1:
             return x
     return None
 
 # Funkcja szyfrująca szyfrem afinicznym
-def affine_encrypt(text, A, B):
-    encrypted = "".join(
-        chr(((A * (ord(ch) - ord('a')) + B) % 26) + ord('a')) if ch.isalpha() else ch for ch in text
+def szyfruj_afinicznie(tekst, A, B):
+    zaszyfrowany = "".join(
+        chr(((A * (ord(znak) - ord('a')) + B) % 26) + ord('a')) if znak.isalpha() else znak for znak in tekst
     )
-    return encrypted
+    return zaszyfrowany
 
 # Funkcja deszyfrująca szyfr afiniczny
-def affine_decrypt(text, A, B):
-    A_inv = mod_inverse(A, 26)  # Obliczamy odwrotność modularną A względem 26
-    decrypted = "".join(
-        chr(((A_inv * ((ord(ch) - ord('a')) - B)) % 26) + ord('a')) if ch.isalpha() else ch for ch in text
+def deszyfruj_afinicznie(tekst, A, B):
+    A_odwrotne = odwrotność_modulo(A, 26)  # Obliczamy odwrotność modularną A względem 26
+    odszyfrowany = "".join(
+        chr(((A_odwrotne * ((ord(znak) - ord('a')) - B)) % 26) + ord('a')) if znak.isalpha() else znak for znak in tekst
     )
-    return decrypted
+    return odszyfrowany
 
-# 75.1: Znalezienie słów zaczynających się i kończących na 'd'
-with open("tekst.txt", "r", encoding="utf-8") as file:
-    words = file.read().split()
+# Zadanie 1: Znalezienie słów zaczynających się i kończących na 'd'
+def zadanie1():
+    with open("tekst.txt", "r", encoding="utf-8") as plik:
+        słowa = plik.read().split()
+    return [słowo for słowo in słowa if len(słowo) > 1 and słowo[0] == 'd' and słowo[-1] == 'd']
 
-filtered_words = [word for word in words if len(word) > 1 and word[0] == 'd' and word[-1] == 'd']
+# Zadanie 2: Szyfrowanie słów o długości >= 10 kluczem (5,2)
+def zadanie2():
+    with open("tekst.txt", "r", encoding="utf-8") as plik:
+        słowa = plik.read().split()
+    return [szyfruj_afinicznie(słowo, 5, 2) for słowo in słowa if len(słowo) >= 10]
 
-# 75.2: Szyfrowanie słów o długości >= 10 kluczem (5,2)
-ciphered_words = [affine_encrypt(word, 5, 2) for word in words if len(word) >= 10]
-
-# 75.3: Znajdowanie klucza szyfrującego i deszyfrującego
-with open("probka.txt", "r", encoding="utf-8") as file:
-    samples = [line.split() for line in file.readlines()]
-
-keys = []
-for plain, cipher in samples:
-    for A in range(1, 26, 2):  # Przeszukujemy tylko liczby względnie pierwsze z 26
-        if mod_inverse(A, 26) is None:
-            continue
-        for B in range(26):
-            if affine_encrypt(plain, A, B) == cipher:
-                decrypt_A = mod_inverse(A, 26)
-                decrypt_B = (-B * decrypt_A) % 26
-                keys.append(((A, B), (decrypt_A, decrypt_B)))
-                break
+# Zadanie 3: Znajdowanie klucza szyfrującego i deszyfrującego
+def zadanie3():
+    with open("probka.txt", "r", encoding="utf-8") as plik:
+        próbki = [wiersz.split() for wiersz in plik.readlines()]
+    
+    klucze = []
+    for jawny, zaszyfrowany in próbki:
+        for A in range(1, 26, 2):  # Przeszukujemy tylko liczby względnie pierwsze z 26
+            if odwrotność_modulo(A, 26) is None:
+                continue
+            for B in range(26):
+                if szyfruj_afinicznie(jawny, A, B) == zaszyfrowany:
+                    A_deszyfrujące = odwrotność_modulo(A, 26)
+                    B_deszyfrujące = (-B * A_deszyfrujące) % 26
+                    klucze.append(((A, B), (A_deszyfrujące, B_deszyfrujące)))
+                    break
+    return klucze
 
 # Zapis wyników
-def save_results():
-    with open("wyniki.txt", "w", encoding="utf-8") as out:
-        out.write("75.1\n" + " ".join(filtered_words) + "\n")
-        out.write("75.2\n" + "\n".join(ciphered_words) + "\n")
-        out.write("75.3\n")
-        for enc, dec in keys:
-            out.write(f"Klucz szyfrujący: {enc}, Klucz deszyfrujący: {dec}\n")
+def zapisz_wyniki():
+    wyniki1 = zadanie1()
+    wyniki2 = zadanie2()
+    wyniki3 = zadanie3()
+    
+    with open("wyniki.txt", "w", encoding="utf-8") as plik:
+        plik.write("75.1\n" + " ".join(wyniki1) + "\n")
+        plik.write("75.2\n" + "\n".join(wyniki2) + "\n")
+        plik.write("75.3\n")
+        for szyfr, deszyfr in wyniki3:
+            plik.write(f"Klucz szyfrujący: {szyfr}, Klucz deszyfrujący: {deszyfr}\n")
 
-save_results()
-
-
-Usunąłem użycie gotowej funkcji mod_inverse i zamiast tego dodałem własną implementację obliczania odwrotności modularnej. Daj znać, jeśli potrzebujesz dalszych zmian!
-
+zapisz_wyniki()
